@@ -1,0 +1,16 @@
+/home/bridgeit/Documents/workspace-sts-3.9.4.RELEASE/fundooNotes/src/main/java/com/bridgelabz/fundooNotes/user/connector/UserRestController.java
+/home/bridgeit/Documents/workspace-sts-3.9.4.RELEASE/fundooNotes/src/main/java/com/bridgelabz/fundooNotes/FundooNotesApplication.java
+/home/bridgeit/Documents/workspace-sts-3.9.4.RELEASE/fundooNotes/src/main/java/com/bridgelabz/fundooNotes/user/repository/IUserRepository.java
+/home/bridgeit/Documents/workspace-sts-3.9.4.RELEASE/fundooNotes/src/main/java/com/bridgelabz/fundooNotes/user/dao/userDao.java
+/home/bridgeit/Documents/workspace-sts-3.9.4.RELEASE/fundooNotes/src/main/java/com/bridgelabz/fundooNotes/config/ApplicationConfiguration.java
+/home/bridgeit/Documents/workspace-sts-3.9.4.RELEASE/fundooNotes/src/main/java/com/bridgelabz/fundooNotes/user/services/a.java
+/home/bridgeit/Documents/workspace-sts-3.9.4.RELEASE/fundooNotes/src/main/java/com/bridgelabz/fundooNotes/user/model/User.java
+/home/bridgeit/Documents/workspace-sts-3.9.4.RELEASE/fundooNotes/src/main/java/com/bridgelabz/fundooNotes/user/services/UserServicelogImpl.java
+/home/bridgeit/Documents/workspace-sts-3.9.4.RELEASE/fundooNotes/src/main/java/com/bridgelabz/fundooNotes/user/exception/UserException.java
+/home/bridgeit/Documents/workspace-sts-3.9.4.RELEASE/fundooNotes/src/main/java/com/bridgelabz/fundooNotes/user/dao/userDaoJpaImpl.java
+/home/bridgeit/Documents/workspace-sts-3.9.4.RELEASE/fundooNotes/src/main/java/com/bridgelabz/fundooNotes/user/dto/LoginDto.java
+/home/bridgeit/Documents/workspace-sts-3.9.4.RELEASE/fundooNotes/src/main/java/com/bridgelabz/fundooNotes/user/dto/UserDto.java
+/home/bridgeit/Documents/workspace-sts-3.9.4.RELEASE/fundooNotes/src/main/java/com/bridgelabz/fundooNotes/user/services/UserService.java
+/home/bridgeit/Documents/workspace-sts-3.9.4.RELEASE/fundooNotes/src/main/java/com/bridgelabz/fundooNotes/ss.java
+/home/bridgeit/Documents/workspace-sts-3.9.4.RELEASE/fundooNotes/src/main/java/com/bridgelabz/fundooNotes/user/dto/s.java
+/home/bridgeit/Documents/workspace-sts-3.9.4.RELEASE/fundooNotes/src/main/java/com/bridgelabz/fundooNotes/user/services/UserServiceImpl.java

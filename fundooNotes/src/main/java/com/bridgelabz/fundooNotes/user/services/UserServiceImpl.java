@@ -9,12 +9,14 @@ import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.bridgelabz.fundooNotes.user.dto.UserDto;
 //import com.bridgelabz.fundooNotes.user.dto.UserDto;
 import com.bridgelabz.fundooNotes.user.model.User;
 import com.bridgelabz.fundooNotes.user.repository.IUserRepository;
+import com.bridgelabz.fundooNotes.utility.MailHelper;
 
 //import com.bridgelabz.fundooNotes.service.User;
 //import com.bridgelabz.fundooNotes.service.UserRepository;
@@ -22,6 +24,18 @@ import com.bridgelabz.fundooNotes.user.repository.IUserRepository;
 @Service
 public class UserServiceImpl implements UserService
 {
+	
+	@Value("${sender.email}")
+	String from;
+	
+	@Value("${sender.password}")
+	String password;
+	
+	String to = null;
+	//String receiver= null;
+	String msgheader= "Welcome to Bridgeit ";
+	String textmsg="Your account has been added successfully";
+	
 	@Autowired
 	private IUserRepository userrepository;
 	
@@ -69,9 +83,13 @@ public class UserServiceImpl implements UserService
 		
 		user.setRegisterDate(registerDate);
 		
-		user.setIsVerified("true");
+		user.setIsVerified("true");  
 		
 		userrepository.save(user);
+		
+		//from,password,to,subject,message  
+	     MailHelper.send(from,password,"phulsundarsushant26@gmail.com",msgheader,textmsg); 
+		
 	}
 
 	@Override

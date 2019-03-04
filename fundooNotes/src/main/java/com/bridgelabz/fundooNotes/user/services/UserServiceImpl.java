@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.bridgelabz.fundooNotes.user.dto.UserDto;
+import com.bridgelabz.fundooNotes.user.exception.UserException;
 //import com.bridgelabz.fundooNotes.user.dto.UserDto;
 import com.bridgelabz.fundooNotes.user.model.User;
 import com.bridgelabz.fundooNotes.user.repository.IUserRepository;
@@ -58,7 +59,7 @@ public class UserServiceImpl implements UserService
 	}
 
 	@Override
-	public User findById(int id) {
+	public User findById(Long id) {
 		User user=new User();
 		
 		Optional<User> result = userrepository.findById(id);
@@ -67,8 +68,9 @@ public class UserServiceImpl implements UserService
 		{
 			user = result.get();
 		}
-		else {
-			//throw new RuntimeException("Did not find User id - " + theId);
+		else 
+		{
+			throw new UserException("*****User not found plz put valid id no");
 		}
 	
 		return user;
@@ -88,12 +90,12 @@ public class UserServiceImpl implements UserService
 		userrepository.save(user);
 		
 		//from,password,to,subject,message  
-	     MailHelper.send(from,password,"phulsundarsushant26@gmail.com",msgheader,textmsg); 
+	     //MailHelper.send(from,password,"phulsundarsushant26@gmail.com",msgheader,textmsg); 
 		
 	}
 
 	@Override
-	public void deleteById(int id)
+	public void deleteById(Long id)
 	{
 		userrepository.deleteById(id);
 	}

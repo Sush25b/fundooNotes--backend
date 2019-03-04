@@ -9,9 +9,9 @@ public interface UserService
 {
 	 List<User> findAll();
 	
-	 User findById(int theId);
+	 User findById(Long theId);
 	
 	 void save(UserDto userDTO);
 	
-	 void deleteById(int theId);
+	 void deleteById(Long theId);
 }

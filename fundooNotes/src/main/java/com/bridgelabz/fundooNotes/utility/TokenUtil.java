@@ -1,10 +1,13 @@
 package com.bridgelabz.fundooNotes.utility;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.Verification;
 
 public class TokenUtil 
 {
@@ -34,20 +37,46 @@ public class TokenUtil
 			return null;
 	}
 	
-	public static void decodeToken(String token)
+	public static Long decodeToken(String token)
 	{
-			try 
-			{
-			    DecodedJWT jwt = JWT.decode(token);
-			    System.out.println("decoded claim is:"+ jwt);
-			    
-			} 
-			catch (JWTDecodeException exception)
-			{
-			    //Invalid token
-			}
+//			try 
+//			{
+//				System.out.println(token);
+//				Long userid;
+//				
+//				// to set algorithm
+//	            Verification verification=JWT.require(Algorithm.HMAC256(TOKEN_SECRET));
+//	            JWTVerifier jwtverifier=verification.build();
+//	            
+//	            //to decode token
+//	            DecodedJWT decodedjwt= JWT.decode(token);
+//	        
+//	            //retrive data
+//	            Claim claim=decodedjwt.getClaim("userid");
+//	            System.out.println(claim);
+//	            userid=claim.asLong();
+//	            
+//	            System.out.println(userid);
+//	            return userid;
+//			    
+//			} 
+//			catch (JWTDecodeException exception)
+//			{
+//			    //Invalid token
+//			}
+//			return null;
+
+		  Long userid;
+	            //for verification algorithm
+	            Verification verification=JWT.require(Algorithm.HMAC256(TOKEN_SECRET));
+	            JWTVerifier jwtverifier=verification.build();
+	            //to decode token
+	            DecodedJWT decodedjwt=jwtverifier.verify(token);
+	            //retrive data
+	            Claim claim=decodedjwt.getClaim("userId");
+	            userid=claim.asLong();  
+	            System.out.println(userid);
+	            return userid;
+
 	}
-	
-	
-	
 }

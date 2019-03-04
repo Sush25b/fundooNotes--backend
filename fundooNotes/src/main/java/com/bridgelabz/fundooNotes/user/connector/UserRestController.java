@@ -4,18 +4,24 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgelabz.fundooNotes.user.dto.LoginDto;
 import com.bridgelabz.fundooNotes.user.dto.UserDto;
+import com.bridgelabz.fundooNotes.user.exception.UserErrorResponse;
 import com.bridgelabz.fundooNotes.user.exception.UserException;
+import com.bridgelabz.fundooNotes.user.exception.UserException2;
 import com.bridgelabz.fundooNotes.user.model.User;
 import com.bridgelabz.fundooNotes.user.services.UserService;
 import com.bridgelabz.fundooNotes.user.services.UserServicelogImpl;
@@ -64,15 +70,16 @@ public class UserRestController
 
 	// add mapping for DELETE /Users/{UserId} - delete User
 
-	@DeleteMapping("/users/{userid}")
-	public String deleteUser(@PathVariable int userid) 
+	//successfully
+	@DeleteMapping("/usersdelete/{userid}")
+	public String deleteUser(@PathVariable Long userid)  
 	{
 		User tempUser = userservice.findById(userid);
 
 		// throw exception if null
-
-		if (tempUser == null) {
-			throw new RuntimeException("User id not found - " + userid);
+		if (tempUser == null) 		//no need of checking it again
+		{
+			System.out.println("invalid user");
 		}
 
 		userservice.deleteById(userid);
@@ -91,17 +98,44 @@ public class UserRestController
 		return userDTO;
 	}
 
-
+	//successfully
 	@PostMapping("/login") 
-	public String Login( @RequestBody LoginDto loginDto )  throws UserException 
-	{ 
+	public String Login(@RequestBody LoginDto loginDto ) throws UnsupportedEncodingException
+	{ 		
+		System.out.println("a");
 		return userLoginService.onLogin(loginDto); 
 	}
 
+	//successfully
 	@PostMapping("/register") 
-	public String registerUser(@RequestBody UserDto userDtO) throws UnsupportedEncodingException, UserException 
+	public String registerUser(@RequestBody UserDto userDtO) throws UnsupportedEncodingException // UserException2 
 	{ 
 		return userLoginService.onRegister(userDtO); 
 	}
-
+	
+	  //successfully
+	  @PostMapping(value="/forgetpassword") 
+	  public String forgotPassword(@RequestParam String emailid) throws UnsupportedEncodingException 
+	  {
+		 return userLoginService.forgetPassword(emailid);
+	  }
+	 
+	  //successfully
+	  @GetMapping(value="resetPassword/user/{token}/valid") 
+	  public String resetPassword(@PathVariable String token,@RequestParam("password") String password) throws UnsupportedEncodingException
+	  {
+		  	System.out.println("token "+token+" ,  password"+password); 
+	  
+	  		return userLoginService.resetPassword(token,password);
+	  }
+	  
+	  //successfully
+	  @GetMapping(value="validEmail/user/{token}/valid") 
+	  public String validEmail(@PathVariable String token) throws UnsupportedEncodingException
+	  {
+		  System.out.println("token "+token); 
+		  
+		  	return  userLoginService.validEmail(token); 
+	  }
+	 
 }

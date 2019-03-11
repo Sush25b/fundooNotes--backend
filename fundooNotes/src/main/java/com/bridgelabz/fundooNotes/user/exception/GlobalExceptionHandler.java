@@ -6,13 +6,15 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.bridgelabz.fundooNotes.user.response.UserResponse;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler
 {
 	@ExceptionHandler(UserException.class)
-	public ResponseEntity<UserErrorResponse> handleUserException(UserException exc)
+	public ResponseEntity<UserResponse> handleUserException(UserException exc)
 	{
-		UserErrorResponse error=new UserErrorResponse();
+		UserResponse error=new UserResponse();
 		
 		error.setMessage(exc.getMessage()); //get Message from parent class-->RuntimeException
 		error.setStatus(exc.errorCode); 
@@ -22,9 +24,9 @@ public class GlobalExceptionHandler
 	}
 
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<UserErrorResponse> handleException(Exception exc)
+	public ResponseEntity<UserResponse> handleException(Exception exc)
 	{
-		UserErrorResponse error=new UserErrorResponse();
+		UserResponse error=new UserResponse();
 		
 		error.setMessage(exc.getMessage());
 		error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());	//INTERNAL_SERVER_ERROR =500

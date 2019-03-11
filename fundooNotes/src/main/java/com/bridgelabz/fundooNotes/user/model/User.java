@@ -1,11 +1,19 @@
 package com.bridgelabz.fundooNotes.user.model;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.bridgelabz.fundooNotes.note.model.Note;
 
 @Entity
 @Table(name="User")
@@ -40,8 +48,20 @@ public class User
 	@Column(name="isVerified")
 	private String isVerified;
 
-
+	@OneToMany(targetEntity=Note.class, cascade =CascadeType.ALL,fetch=FetchType.LAZY)
+	@JoinColumn(name="id")
+	List<Note> note;
 	
+	public List<Note> getNote() {
+		return note;
+	}
+
+
+	public void setNote(List<Note> note) {
+		this.note = note;
+	}
+
+
 	public Long getId() {
 		return id;
 	}
@@ -131,11 +151,14 @@ public class User
 		this.isVerified = isVerified;
 	}
 
+
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", emailid=" + emailid
 				+ ", phoneno=" + phoneno + ", password=" + password + ", updateDate=" + updateDate + ", registerDate="
-				+ registerDate + ", isVerified=" + isVerified + "]";
+				+ registerDate + ", isVerified=" + isVerified + ", note=" + note + "]";
 	}
+
+	
 
 }

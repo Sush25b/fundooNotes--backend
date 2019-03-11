@@ -30,8 +30,9 @@ public class MailHelper
 	 //Method 2
 	public static String getUrl(long id) 
 	{
-		return "http://localhost:4200/user/"+ TokenUtil.createToken(id)+"/valid"; 
+		return "http://localhost:8080/fundooNotes/user/"+ TokenUtil.createToken(id); 
 	}
+	
 	
 	public static void sendEmail(Session session, String toEmail, String subject, String body){
 		try

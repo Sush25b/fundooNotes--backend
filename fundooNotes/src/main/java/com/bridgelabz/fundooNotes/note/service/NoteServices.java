@@ -13,11 +13,17 @@ public interface NoteServices
 {
 	public ResponseEntity<UserResponse> createNote(NoteDto noteDto, String Token);
 
+	//
 	public ResponseEntity<UserResponse> updateNote(Long noteId, NoteDto noteDto, String token);
 	
 	public ResponseEntity<UserResponse> trashNote(Long noteId, String token);
 
 	public List<Note> getUserNote(String token);
 
+	public ResponseEntity<UserResponse> deleteNote(Long noteId, String token);
+	
+	public ResponseEntity<UserResponse> isPinned(Long noteId, String token);
+
+	public ResponseEntity<UserResponse> isArchieve(Long noteId, String token);
 	
 }

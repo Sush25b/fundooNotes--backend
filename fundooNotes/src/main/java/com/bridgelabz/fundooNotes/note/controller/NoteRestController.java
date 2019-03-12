@@ -31,7 +31,7 @@ public class NoteRestController
 	@Autowired(required=true) 
 	NoteServices noteServices;
 
-//	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+	//	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
 	//successfully
 	/**
@@ -45,22 +45,12 @@ public class NoteRestController
 		return noteServices.createNote(noteDto, token); 
 	}
 
-	/**
-	 * Method to update a--->particular note 
-	 */
-	@PostMapping("/updatenote") 
-	public ResponseEntity<UserResponse> updateNote(@RequestParam("noteId") Long noteId,@RequestBody NoteDto noteDto,@RequestHeader String token) // UserException2 
-	{ 
-		return noteServices.updateNote(noteId, noteDto,token);
-	}
-
 	//successfull
 	/**
 	 * Method to move a-->particular note to trash 
 	 */
 	@PostMapping(value="/trash") 
-	// public ResponseEntity<UserResponse> forgotPassword(@RequestBody String emailid) //throws UnsupportedEncodingException 
-	public ResponseEntity<UserResponse> trashNote(@RequestParam Long noteId,@RequestHeader String token) //throws UnsupportedEncodingException 
+	public ResponseEntity<UserResponse> trashNote(@RequestParam Long noteId,@RequestHeader String token) 
 	{
 		System.out.println("***************");
 		return noteServices.trashNote(noteId, token);
@@ -76,5 +66,42 @@ public class NoteRestController
 		return noteServices.getUserNote(token);
 	}
 
-	
+	//successfully
+	/**
+	 * Method to update a--->particular note 
+	 */
+	@PostMapping("/updatenote") 
+	public ResponseEntity<UserResponse> updateNote(@RequestParam("noteId") Long noteId,@RequestBody NoteDto noteDto,@RequestHeader String token) // UserException2 
+	{ 
+		return noteServices.updateNote(noteId, noteDto,token);
+	}
+
+	/**
+	 * Method to pin/unpin a--->particular note 
+	 */
+	@PostMapping("/ispinned") 
+	public ResponseEntity<UserResponse> isPinned(@RequestParam("noteId") Long noteId,@RequestHeader String token) 
+	{ 
+		return noteServices.isPinned(noteId,token);
+	}
+
+	/**
+	 * Method to update a--->particular note 
+	 */
+	@PostMapping("/isarchieve") 
+	public ResponseEntity<UserResponse> isArchieve(@RequestParam("noteId") Long noteId,@RequestHeader String token) // UserException2 
+	{ 
+		return noteServices.isArchieve(noteId, token);
+	}
+
+	//successfull
+	/**
+	 * Method to move a-->particular note to trash 
+	 */
+	@PostMapping(value="/delete") 
+	public ResponseEntity<UserResponse> deleteNote(@RequestParam Long noteId,@RequestHeader String token) 
+	{
+		System.out.println("***************");
+		return noteServices.deleteNote(noteId, token);
+	}
 }

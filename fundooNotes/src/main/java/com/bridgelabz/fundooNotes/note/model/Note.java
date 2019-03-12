@@ -19,7 +19,7 @@ public class Note
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="note_id")
+	@Column(name="note_id" )
 	private Long noteId;
 	
 	@Column(name ="title" )
@@ -110,12 +110,12 @@ public class Note
 	}
 
 
-	public Boolean getIsArchive() {
+	public boolean getIsArchive() {
 		return isArchive;
 	}
 
 
-	public void setIsArchive(Boolean isArchive) {
+	public void setIsArchive(boolean isArchive) {
 		this.isArchive = isArchive;
 	}
 

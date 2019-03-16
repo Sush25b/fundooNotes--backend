@@ -22,6 +22,7 @@ import com.bridgelabz.fundooNotes.user.exception.UserException2;
 import com.bridgelabz.fundooNotes.user.model.User;
 import com.bridgelabz.fundooNotes.user.repository.IUserRepository;
 import com.bridgelabz.fundooNotes.user.response.ResponseSender;
+import com.bridgelabz.fundooNotes.user.response.UserResp;
 import com.bridgelabz.fundooNotes.user.response.UserResponse;
 import com.bridgelabz.fundooNotes.utility.MailHelper;
 import com.bridgelabz.fundooNotes.utility.TokenUtil;
@@ -30,6 +31,7 @@ import java.util.Properties;
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
+import javax.servlet.http.HttpServletResponse;
 
 @PropertySource("classpath:message.properties")
 @Service
@@ -67,21 +69,25 @@ public class UserServicesImpl implements UserServices {
 	/**
 	 * Method to---> login
 	 */
-	public ResponseEntity<UserResponse> onLogin(LoginDto loginDto) //throws UnsupportedEncodingException
+	public ResponseEntity<UserResp> onLogin(LoginDto loginDto, HttpServletResponse  response) //throws UnsupportedEncodingException
 	{
 		//// System.out.println(loginDto.getEmailid());
-
+     
 		// get the User (i.e User Object) from loginDTO
 		User user = modelMapper.map(loginDto, User.class);
 		//// System.out.println(user);
-
 		System.out.println(user.getEmailid());
 
-		  //get The User (i.e User Object) from Database --->having email passed here
-		  // here we directly use java 8 lambada Throw Exception feature 
-			User validUser =userRepository.findByEmailid(user.getEmailid()).orElseThrow(()-> new UserException(401,environment.getProperty("user.wrongemailid")));
-		  
-			System.out.println(validUser);
+		//get The User (i.e User Object) from Database --->having email passed here
+		// here we directly use java 8 lambada Throw Exception feature 
+		User validUser =userRepository.findByEmailid(user.getEmailid()).orElseThrow(()-> new UserException(401,environment.getProperty("user.wrongemailid")));
+		System.out.println(validUser);
+
+		//getter token of id===>of valid user>>>>>(to set Header & add Header in reponse)
+		String jwttoken=MailHelper.getToken(validUser.getId());
+		//add header(encrypt token) in response
+		response.setHeader("token",jwttoken);
+			
 		  if(validUser.getIsVerified().equals("true"))
 		  {
 			  //match the loginDto password && validUser password
@@ -97,10 +103,10 @@ public class UserServicesImpl implements UserServices {
 			  else
 			  { 	
 				  //return "login successfully"; 
-				  return ResponseSender.sendUserRespone("login successfully",200);
+				  return ResponseSender.sendUserResp("login successfully",200,jwttoken);
 			  }
 		  }
-		  return ResponseSender.sendUserRespone("not a valid user",401);
+		  return ResponseSender.sendUserResp("not a valid user",401, jwttoken);
 	}
 
 	
@@ -134,7 +140,7 @@ public class UserServicesImpl implements UserServices {
 		sendmail("successfully register", user.getId(),"/validate");
 
 		// return
-		return ResponseSender.sendUserRespone("successfully Register",200);
+		return ResponseSender.sendUserResponse("successfully Register",200);
 	}
 
 	
@@ -158,7 +164,7 @@ public class UserServicesImpl implements UserServices {
 		// call method-->to send mail
 		sendmail("email send to reset password", id,"");
 
-		return ResponseSender.sendUserRespone("Mail send to resetpassword",200 );
+		return ResponseSender.sendUserResponse("Mail send to resetpassword",200 );
 	}
 
 	
@@ -194,7 +200,7 @@ public class UserServicesImpl implements UserServices {
 		user = userRepository.save(user);
 
 		// return
-		return ResponseSender.sendUserRespone("password reset successfully",200);
+		return ResponseSender.sendUserResponse("password reset successfully",200);
 	}
 
 	
@@ -229,7 +235,7 @@ public class UserServicesImpl implements UserServices {
 		user = userRepository.save(user);
 
 		// return
-		return ResponseSender.sendUserRespone("Email isverified successfully",200);
+		return ResponseSender.sendUserResponse("Email isverified successfully",200);
 	}
 //
 //	/**

@@ -2,16 +2,19 @@ package com.bridgelabz.fundooNotes.user.service;
 
 import java.io.UnsupportedEncodingException;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.http.ResponseEntity;
 
 import com.bridgelabz.fundooNotes.user.dto.LoginDto;
 import com.bridgelabz.fundooNotes.user.dto.UserDto;
 import com.bridgelabz.fundooNotes.user.exception.UserException;
+import com.bridgelabz.fundooNotes.user.response.UserResp;
 import com.bridgelabz.fundooNotes.user.response.UserResponse;
 
 public interface UserServices 
 {
-	ResponseEntity<UserResponse> onLogin(LoginDto loginDto) ;
+	ResponseEntity<UserResp> onLogin(LoginDto loginDto, HttpServletResponse  response) ;
 	ResponseEntity<UserResponse> onRegister(UserDto userDto) ;
 	ResponseEntity<UserResponse> forgetPassword(UserDto userDto) ;
 	ResponseEntity<UserResponse> resetPassword(String token, String password) ;

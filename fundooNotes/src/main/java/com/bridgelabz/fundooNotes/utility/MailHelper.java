@@ -33,6 +33,10 @@ public class MailHelper
 		return "http://localhost:8080/fundooNotes/user/"+ TokenUtil.createToken(id); 
 	}
 	
+	public static String getToken(long id)
+	{
+		return TokenUtil.createToken(id);
+	}
 	
 	public static void sendEmail(Session session, String toEmail, String subject, String body){
 		try

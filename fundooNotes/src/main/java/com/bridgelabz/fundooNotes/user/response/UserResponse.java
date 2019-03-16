@@ -9,6 +9,7 @@ public class UserResponse
 	public UserResponse() {
 
 	}
+	
 	public UserResponse(String message, long timeStamp, int status) {
 
 		this.message = message;
@@ -34,12 +35,9 @@ public class UserResponse
 		this.timeStamp = timeStamp;
 	}
 	
-	
 	@Override
 	public String toString() {
 		return "UserErrorResponse [status=" + status + ", message=" + message + ", timeStamp=" + timeStamp + "]";
 	}
-	
-	
 	
 }

@@ -3,6 +3,8 @@ package com.bridgelabz.fundooNotes.user.controller;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +25,11 @@ import com.bridgelabz.fundooNotes.user.dto.UserDto;
 import com.bridgelabz.fundooNotes.user.exception.UserException;
 import com.bridgelabz.fundooNotes.user.exception.UserException2;
 import com.bridgelabz.fundooNotes.user.model.User;
+import com.bridgelabz.fundooNotes.user.response.UserResp;
 import com.bridgelabz.fundooNotes.user.response.UserResponse;
 import com.bridgelabz.fundooNotes.user.service.UserService;
 import com.bridgelabz.fundooNotes.user.service.UserServicesImpl;
+import com.bridgelabz.fundooNotes.utility.TokenUtil;
 
 @RestController
 @RequestMapping("/fundooNotes")
@@ -57,11 +61,11 @@ public class UserRestController
 
 	//successfully
 	@PostMapping("/login") 
-	public ResponseEntity<UserResponse> Login(@RequestBody LoginDto loginDto ) // throws UnsupportedEncodingException
+	public ResponseEntity<UserResp> Login(@RequestBody LoginDto loginDto, HttpServletResponse  response) // throws UnsupportedEncodingException
 	{ 		
 		System.out.println("a");
 		System.out.println(loginDto);
-		return userServices.onLogin(loginDto); 
+		return userServices.onLogin(loginDto,response); 
 	}
 
 	//successfully

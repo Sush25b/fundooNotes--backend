@@ -25,5 +25,7 @@ public interface NoteServices
 	public ResponseEntity<UserResponse> isPinned(Long noteId, String token);
 
 	public ResponseEntity<UserResponse> isArchieve(Long noteId, String token);
+
+	public List<Note> getUserNotes(String token, boolean trash, boolean archive);
 	
 }

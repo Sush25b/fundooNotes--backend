@@ -1,17 +1,23 @@
 package com.bridgelabz.fundooNotes.note.model;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.bridgelabz.fundooNotes.label.model.Label;
+import com.bridgelabz.fundooNotes.user.model.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="Note")
@@ -19,7 +25,7 @@ public class Note
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="note_id" )
+	@Column(name="noteId" )
 	private Long noteId;
 	
 	@Column(name ="title" )
@@ -28,8 +34,8 @@ public class Note
 	@Column(name = "description")
 	private String description;
 	
-	@Column(name = "colour")
-	private String colour;
+	@Column(name = "color")
+	private String color;
 	
 	@Column(name = "is_pinned")
 	private boolean isPinned;
@@ -48,115 +54,136 @@ public class Note
 	
 	@Column(name = "lastupdate_time")
 	private LocalDateTime lastUpdateTime;
-
 	
+//	@ManyToMany(cascade=CascadeType.ALL)
+//	List<Label> label;
+	
+//	@JsonIgnore
+//	@ManyToMany(cascade = CascadeType.ALL)
+//	private Set<Label> Label;
+	
+//	@ManyToOne
+//	@JoinColumn(name="user_id")
+//	private User user;
+	
+//************************8********************
+	@ManyToMany(cascade= {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH})
+	@JsonIgnore
+	@JoinTable(
+				name="note_label",
+				joinColumns=@JoinColumn(name="note_note_id"),
+				inverseJoinColumns=@JoinColumn(name="label_label_id")
+			  )
+	private Set<Label> label;
+
 	public Long getNoteId() {
 		return noteId;
 	}
-
 
 	public void setNoteId(Long noteId) {
 		this.noteId = noteId;
 	}
 
-
 	public String getTitle() {
 		return title;
 	}
-
 
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
-
 	public String getDescription() {
 		return description;
 	}
-
 
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
-
-	public String getColour() {
-		return colour;
+	public String getColor() {
+		return color;
 	}
 
-
-	public void setColour(String colour) {
-		this.colour = colour;
+	public void setColor(String color) {
+		this.color = color;
 	}
-
 
 	public boolean isPinned() {
 		return isPinned;
 	}
 
-
 	public void setPinned(boolean isPinned) {
 		this.isPinned = isPinned;
 	}
-
 
 	public boolean isTrash() {
 		return isTrash;
 	}
 
-
 	public void setTrash(boolean isTrash) {
 		this.isTrash = isTrash;
 	}
 
-
-	public boolean getIsArchive() {
+	public boolean isArchive() {
 		return isArchive;
 	}
 
-
-	public void setIsArchive(boolean isArchive) {
+	public void setArchive(boolean isArchive) {
 		this.isArchive = isArchive;
 	}
-
 
 	public LocalDateTime getReminder() {
 		return reminder;
 	}
 
-
 	public void setReminder(LocalDateTime reminder) {
 		this.reminder = reminder;
 	}
-
 
 	public LocalDateTime getCreatedTime() {
 		return createdTime;
 	}
 
-
 	public void setCreatedTime(LocalDateTime createdTime) {
 		this.createdTime = createdTime;
 	}
-
 
 	public LocalDateTime getLastUpdateTime() {
 		return lastUpdateTime;
 	}
 
-
 	public void setLastUpdateTime(LocalDateTime lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
 	}
 
+	
+
+//	public User getUser() {
+//		return user;
+//	}
+//
+//	public void setUser(User user) {
+//		this.user = user;
+//	}
+
+	public Set<Label> getLabel() {
+		return label;
+	}
+
+	public void setLabel(Set<Label> label) {
+		this.label = label;
+	}
 
 	@Override
 	public String toString() {
-		return "Note [noteId=" + noteId + ", title=" + title + ", description=" + description + ", colour=" + colour
+		return "Note [noteId=" + noteId + ", title=" + title + ", description=" + description + ", color=" + color
 				+ ", isPinned=" + isPinned + ", isTrash=" + isTrash + ", isArchive=" + isArchive + ", reminder="
-				+ reminder + ", createdTime=" + createdTime + ", lastUpdateTime=" + lastUpdateTime + "]";
+				+ reminder + ", createdTime=" + createdTime + ", lastUpdateTime=" + lastUpdateTime 
+				+ ", label=" + label + "]";
 	}
-
 	
-
+	
 }
+
+
+

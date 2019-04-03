@@ -1,5 +1,9 @@
 package com.bridgelabz.fundooNotes.user.response;
 
+/**
+ * Old file..........
+ *
+ */
 public class UserResponeSet 
 {
 	int code;		

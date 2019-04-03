@@ -14,7 +14,8 @@ import com.bridgelabz.fundooNotes.user.response.UserResponse;
 
 public interface UserServices 
 {
-	ResponseEntity<UserResp> onLogin(LoginDto loginDto, HttpServletResponse  response) ;
+	//, HttpServletResponse  response
+	ResponseEntity<UserResp> onLogin(LoginDto loginDto) ;
 	ResponseEntity<UserResponse> onRegister(UserDto userDto) ;
 	ResponseEntity<UserResponse> forgetPassword(UserDto userDto) ;
 	ResponseEntity<UserResponse> resetPassword(String token, String password) ;

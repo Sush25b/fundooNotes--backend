@@ -12,6 +12,8 @@ public class NoteDto
 
 	private String description;
 
+	private String color;
+
 	public String getTitle() {
 		return title;
 	}
@@ -28,11 +30,17 @@ public class NoteDto
 		this.description = description;
 	}
 
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
 	@Override
 	public String toString() {
-		return "NoteDto [title=" + title + ", description=" + description + "]";
+		return "NoteDto [title=" + title + ", description=" + description + ", color=" + color + "]";
 	}
-	
-	
 	
 }

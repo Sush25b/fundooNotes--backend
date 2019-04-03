@@ -1,6 +1,7 @@
 package com.bridgelabz.fundooNotes.user.model;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.bridgelabz.fundooNotes.label.model.Label;
 import com.bridgelabz.fundooNotes.note.model.Note;
 
 @Entity
@@ -47,118 +49,125 @@ public class User
 	
 	@Column(name="isVerified")
 	private String isVerified;
+	
+//	@OneToMany(mappedBy="user")
+//	private List<Note> notes;
+//	
+//	@OneToMany(mappedBy="usere")
+//	private List<Label> labels;
 
-	@OneToMany(targetEntity=Note.class, cascade =CascadeType.ALL,fetch=FetchType.LAZY)
+	@OneToMany(targetEntity=Note.class, cascade =CascadeType.ALL)
 	@JoinColumn(name="id")
 	List<Note> note;
 	
-	public List<Note> getNote() {
-		return note;
-	}
-
-
-	public void setNote(List<Note> note) {
-		this.note = note;
-	}
-
+	@OneToMany(targetEntity=Label.class, cascade =CascadeType.ALL)
+	@JoinColumn(name="id")
+	Set<Label> label;
 
 	public Long getId() {
 		return id;
 	}
 
-
 	public void setId(Long id) {
 		this.id = id;
 	}
-
 
 	public String getFirstName() {
 		return firstName;
 	}
 
-
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
-
 
 	public String getLastName() {
 		return lastName;
 	}
 
-
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-
 
 	public String getEmailid() {
 		return emailid;
 	}
 
-
 	public void setEmailid(String emailid) {
 		this.emailid = emailid;
 	}
-
 
 	public String getPhoneno() {
 		return phoneno;
 	}
 
-
 	public void setPhoneno(String phoneno) {
 		this.phoneno = phoneno;
 	}
-
 
 	public String getPassword() {
 		return password;
 	}
 
-
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
 
 	public String getUpdateDate() {
 		return updateDate;
 	}
 
-
 	public void setUpdateDate(String updateDate) {
 		this.updateDate = updateDate;
 	}
-
 
 	public String getRegisterDate() {
 		return registerDate;
 	}
 
-
 	public void setRegisterDate(String registerDate) {
 		this.registerDate = registerDate;
 	}
-
 
 	public String getIsVerified() {
 		return isVerified;
 	}
 
-
 	public void setIsVerified(String isVerified) {
 		this.isVerified = isVerified;
 	}
 
+	public List<Note> getNote() {
+		return note;
+	}
+
+	public void setNote(List<Note> note) {
+		this.note = note;
+	}
+
+	public Set<Label> getLabel() {
+		return label;
+	}
+
+	public void setLabel(Set<Label> label) {
+		this.label = label;
+	}
 
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", emailid=" + emailid
 				+ ", phoneno=" + phoneno + ", password=" + password + ", updateDate=" + updateDate + ", registerDate="
-				+ registerDate + ", isVerified=" + isVerified + ", note=" + note + "]";
+				+ registerDate + ", isVerified=" + isVerified + ", note=" + note + ", label=" + label + "]";
 	}
 
 	
+	
+//********    OLD    ***************************
+
+//	@Override
+//	public String toString() {
+//		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", emailid=" + emailid
+//				+ ", phoneno=" + phoneno + ", password=" + password + ", updateDate=" + updateDate + ", registerDate="
+//				+ registerDate + ", isVerified=" + isVerified + ", note=" + note + ", labels=" + labels + "]";
+//	}
 
 }

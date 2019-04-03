@@ -58,14 +58,15 @@ public class UserRestController
 
 		return userDTO;
 	}
-
+	
+	//, HttpServletResponse  response
 	//successfully
 	@PostMapping("/login") 
-	public ResponseEntity<UserResp> Login(@RequestBody LoginDto loginDto, HttpServletResponse  response) // throws UnsupportedEncodingException
+	public ResponseEntity<UserResp> Login(@RequestBody LoginDto loginDto) // throws UnsupportedEncodingException
 	{ 		
 		System.out.println("a");
 		System.out.println(loginDto);
-		return userServices.onLogin(loginDto,response); 
+		return userServices.onLogin(loginDto); 
 	}
 
 	//successfully

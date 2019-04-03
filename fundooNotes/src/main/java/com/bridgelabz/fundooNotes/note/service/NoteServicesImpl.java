@@ -3,6 +3,8 @@ package com.bridgelabz.fundooNotes.note.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +50,9 @@ public class NoteServicesImpl implements NoteServices
 	 */
 	LocalDateTime currDateTime = LocalDateTime.now();
 
-	//Create
+	/**
+	 * Create Note
+	 */
 	public ResponseEntity<UserResponse> createNote(NoteDto noteDto, String token)
 	{
 		Note note = modelMapper.map(noteDto, Note.class);
@@ -63,10 +67,12 @@ public class NoteServicesImpl implements NoteServices
 		//save user
 		userRepository.save(user);
 
-		return ResponseSender.sendUserRespone("Note is created", 200);
+		return ResponseSender.sendUserResponse("Note is created", 200);
 	}
 
-	//trash
+	/**
+	 * trash note
+	 */
 	public ResponseEntity<UserResponse> trashNote(Long noteId, String token) 
 	{
 		//the note is not going to DELETE 
@@ -101,21 +107,45 @@ public class NoteServicesImpl implements NoteServices
 		user.setNote(notes);
 		userRepository.save(user);
 
-		return ResponseSender.sendUserRespone("Note moved to trash",200);
+		return ResponseSender.sendUserResponse("Note moved to trash",200);
 	}
 
 	//Read //get
+	/**
+	 * Read notes
+	 */
 	public List<Note> getUserNote(String token) 
 	{
 		Long userId = TokenUtil.decodeToken(token);
 		User user = userRepository.findById(userId).orElseThrow(() -> new UserException("invalid user"));
 		List<Note> userNote = user.getNote();
 
+		System.out.println(userNote+"*******");
 		return userNote;
 	}
 
+	
+	//Read //get
+	/**
+	 * Read notes
+	 */
+	public List<Note> getUserNotes(String token,boolean trash,boolean archive) 
+	{
+
+		Long userId = TokenUtil.decodeToken(token);
+		User user = userRepository.findById(userId).orElseThrow(() -> new UserException("invalid user"));
+
+		List<Note> userNote = user.getNote().stream().filter(data -> (data.isTrash()==trash && data.isArchive()==archive)).collect(Collectors.toList()); 
+		
+		System.out.println(userNote);
+		
+		return userNote;
+	}
 
 	//update
+	/**
+	 * Update notes
+	 */
 	@Override
 	public ResponseEntity<UserResponse> updateNote(Long noteId,NoteDto noteDto, String token)
 	{
@@ -138,11 +168,14 @@ public class NoteServicesImpl implements NoteServices
 		user.setNote(notes);
 		userRepository.save(user);
 
-		return ResponseSender.sendUserRespone("note updated successfully", 200);
+		return ResponseSender.sendUserResponse("note updated successfully", 200);
 	}
 
 	
 	//ispinned
+	/**
+	 * pin notes
+	 */
 	@Override
 	public ResponseEntity<UserResponse> isPinned(Long noteId, String token)
 	{
@@ -175,11 +208,14 @@ public class NoteServicesImpl implements NoteServices
 		user.setNote(notes);
 		userRepository.save(user);
 
-		return ResponseSender.sendUserRespone("note updated successfully", 200);
+		return ResponseSender.sendUserResponse("note pinned successfully", 200);
 	}
 
 
 	//isArchieve
+	/**
+	 * Archive notes
+	 */
 	@Override
 	public ResponseEntity<UserResponse> isArchieve(Long noteId, String token)
 	{
@@ -196,16 +232,16 @@ public class NoteServicesImpl implements NoteServices
 		Note filteredNote = notes.stream().filter(data -> data.getNoteId().equals(noteId)).findFirst().orElseThrow(() -> new UserException(environment.getProperty("user.note")));
 
 		//check note Archieve STATUS  
-		if(filteredNote.getIsArchive()==true)
+		if(filteredNote.isArchive()==true)
 		{
-			filteredNote.setIsArchive(false);
+			filteredNote.setArchive(false);
 			filteredNote.setLastUpdateTime(currDateTime);    
 			//add the changed note to-->User Notes List
 			notes.add(filteredNote);
 		}
 		else
 		{
-			filteredNote.setIsArchive(true);
+			filteredNote.setArchive(true);
 			filteredNote.setLastUpdateTime(currDateTime);   
 			//add the changed note to-->User Notes List
 			notes.add(filteredNote);
@@ -214,11 +250,14 @@ public class NoteServicesImpl implements NoteServices
 		user.setNote(notes);
 		userRepository.save(user);
 
-		return ResponseSender.sendUserRespone("note updated successfully", 200);
+		return ResponseSender.sendUserResponse("note Archive successfully", 200);
 	}
 
 	
 	//delete
+	/**
+	 * delete note
+	 */
 	@Override
 	public ResponseEntity<UserResponse> deleteNote(Long noteId, String token) 
 	{

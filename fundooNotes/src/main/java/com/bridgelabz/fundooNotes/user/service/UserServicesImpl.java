@@ -66,10 +66,11 @@ public class UserServicesImpl implements UserServices {
 	String currDateTime = LocalDateTime.now().toString();
 
 
+	//, HttpServletResponse  response
 	/**
 	 * Method to---> login
 	 */
-	public ResponseEntity<UserResp> onLogin(LoginDto loginDto, HttpServletResponse  response) //throws UnsupportedEncodingException
+	public ResponseEntity<UserResp> onLogin(LoginDto loginDto) //throws UnsupportedEncodingException
 	{
 		//// System.out.println(loginDto.getEmailid());
      
@@ -86,7 +87,8 @@ public class UserServicesImpl implements UserServices {
 		//getter token of id===>of valid user>>>>>(to set Header & add Header in reponse)
 		String jwttoken=MailHelper.getToken(validUser.getId());
 		//add header(encrypt token) in response
-		response.setHeader("token",jwttoken);
+		
+		//response.setHeader("token",jwttoken);
 			
 		  if(validUser.getIsVerified().equals("true"))
 		  {
@@ -120,6 +122,7 @@ public class UserServicesImpl implements UserServices {
 
 		Optional<User> useralreadyPresent = userRepository.findByEmailid(user.getEmailid());
 
+		
 		if (useralreadyPresent.isPresent())
 		{
 			System.out.println("!!!!!!!!!!!!!!!!!");

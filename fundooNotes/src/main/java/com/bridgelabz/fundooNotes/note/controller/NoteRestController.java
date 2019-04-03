@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,9 +26,9 @@ import com.bridgelabz.fundooNotes.user.service.UserServicesImpl;
 
 @RestController
 @RequestMapping("/fundooNotes/note")
-@CrossOrigin(origins="http://localhost:4200",allowedHeaders="*",exposedHeaders={"jwtTokens"})
+@CrossOrigin(origins="http://localhost:4200",allowedHeaders="*",exposedHeaders="jwtToken")
 public class NoteRestController 
-{
+{	
 	@Autowired(required=true) 
 	NoteServices noteServices;
 
@@ -38,22 +39,10 @@ public class NoteRestController
 	 * Method to Create a note 
 	 */
 	@PostMapping("/createnote") 
-	public ResponseEntity<UserResponse> createNote(@RequestBody NoteDto noteDto,@RequestHeader String token) // throws UnsupportedEncodingException
+	public ResponseEntity<UserResponse> createNote(@RequestBody NoteDto noteDto,@RequestHeader(value="jwtToken") String jwtToken) // throws UnsupportedEncodingException
 	{ 		
-		System.out.println("a");
-
-		return noteServices.createNote(noteDto, token); 
-	}
-
-	//successfull
-	/**
-	 * Method to move a-->particular note to trash 
-	 */
-	@PostMapping(value="/trash") 
-	public ResponseEntity<UserResponse> trashNote(@RequestParam Long noteId,@RequestHeader String token) 
-	{
-		System.out.println("***************");
-		return noteServices.trashNote(noteId, token);
+		System.out.println(noteDto);
+		return noteServices.createNote(noteDto, jwtToken); 
 	}
 
 	//successfully
@@ -61,11 +50,23 @@ public class NoteRestController
 	 * Method to getAll notes--->from particular id 
 	 */
 	@GetMapping(value="/getAll") 
-	public List<Note> getAllNote(@RequestHeader String token) throws UnsupportedEncodingException
+	public List<Note> getAllNote(@RequestHeader(value="jwtToken") String token) throws UnsupportedEncodingException
 	{
+		System.out.println("aaaaaaaaa");
 		return noteServices.getUserNote(token);
 	}
 
+	//successfully
+	/**
+	 * Method to getAll notes--->from particular id 
+	 */
+	@GetMapping(value="/getAlls") 
+	public List<Note> getAllNotes(@RequestParam boolean trash,@RequestParam boolean archive,@RequestHeader(value="jwtToken") String token) throws UnsupportedEncodingException
+	{
+		System.out.println("======");
+		return noteServices.getUserNotes(token,trash,archive);
+	}
+	
 	//successfully
 	/**
 	 * Method to update a--->particular note 
@@ -79,27 +80,44 @@ public class NoteRestController
 	/**
 	 * Method to pin/unpin a--->particular note 
 	 */
-	@PostMapping("/ispinned") 
-	public ResponseEntity<UserResponse> isPinned(@RequestParam("noteId") Long noteId,@RequestHeader String token) 
+	//@PostMapping("/ispinned") 
+	//public ResponseEntity<UserResponse> isPinned(@RequestBody Long noteId,@RequestHeader(value="jwtToken") String jwtToken) 
+    @PutMapping("/ispinned")
+	public ResponseEntity<UserResponse> isPinned(@RequestParam("noteId") Long noteId,@RequestHeader(value="jwtToken") String jwtToken)
 	{ 
-		return noteServices.isPinned(noteId,token);
+		System.out.println(noteId+"   "+jwtToken+"QQQQQQQQQQQQQQQQQQQQ");
+		return noteServices.isPinned(noteId,jwtToken);
 	}
 
 	/**
 	 * Method to update a--->particular note 
 	 */
-	@PostMapping("/isarchieve") 
-	public ResponseEntity<UserResponse> isArchieve(@RequestParam("noteId") Long noteId,@RequestHeader String token) // UserException2 
+    @PutMapping("/isarchieve") 
+	public ResponseEntity<UserResponse> isArchieve(@RequestParam("noteId") Long noteId,@RequestHeader(value="jwtToken") String jwtToken)
+	//public ResponseEntity<UserResponse> isArchieve(@RequestParam("noteId") Long noteId,@RequestHeader String token) // UserException2 
 	{ 
-		return noteServices.isArchieve(noteId, token);
+		System.out.println(noteId+"   "+jwtToken+"QQQQQQQQQQQQQQQQQQQQ");
+		return noteServices.isArchieve(noteId, jwtToken);
 	}
+	
+	//successfull
+	/**
+	 * Method to move a-->particular note to trash 
+	 */
+    @PutMapping(value="/trash") 
+	public ResponseEntity<UserResponse> trashNote(@RequestParam("noteId") Long noteId,@RequestHeader(value="jwtToken") String jwtToken) 
+	{
+		System.out.println("***************");
+		return noteServices.trashNote(noteId, jwtToken);
+	}
+
 
 	//successfull
 	/**
 	 * Method to move a-->particular note to trash 
 	 */
-	@PostMapping(value="/delete") 
-	public ResponseEntity<UserResponse> deleteNote(@RequestParam Long noteId,@RequestHeader String token) 
+	@PostMapping(path="/delete") 
+	public ResponseEntity<UserResponse> deleteNote(@RequestParam("noteId") Long noteId,@RequestHeader String token) 
 	{
 		System.out.println("***************");
 		return noteServices.deleteNote(noteId, token);

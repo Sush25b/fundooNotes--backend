@@ -1,5 +1,6 @@
 package com.bridgelabz.fundooNotes.label.service;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -132,8 +133,13 @@ public class LabelServicesImpl implements LabelServices
 			  noteRepository.save(note);
 			  System.out.println("label add to note***");
 		  }
+		  else
+		  {
+			  System.out.println("label is already added to note***");
+		  }
 		  return ResponseSender.sendUserResponse("Label added to note successfully", 200);
 	} 
+	
 	
 	public ResponseEntity<UserResponse> deleteLabelFromNote( Long labelId, String token) {
 		return null;
@@ -149,6 +155,32 @@ public class LabelServicesImpl implements LabelServices
 		System.out.println(label);
 		return label;
 	} 
+	
+	public Set<Note> getLabelNote(Long labelId,String token)
+	{
+		Long userId = TokenUtil.decodeToken(token);
+		
+		User user = userRepository.findById(userId).orElseThrow(() -> new UserException(environment.getProperty("user.search")));
+		
+		Set<Label> label=user.getLabel();
+
+	    Label filteredlabel = label.stream().filter(data -> data.getLabelId().equals(labelId)).findFirst().orElseThrow(() -> new UserException(404, environment.getProperty("105")));
+		
+	    Set<Note> notes= filteredlabel.getNote();
+		
+	//	label.stream().filter(data -> data.get)         
+ 	    
+//		Iterator<Label> itr= label.iterator();
+//		
+//		while(itr.hasNext()) {  
+//		       //Returns the next element.  
+//		       System.out.println(itr.next());  
+//		       }  
+		
+		System.out.println(filteredlabel+" ---> "+notes);
+		return notes;
+	} 
+	
 //==================================
 //	public List<Label> getAllLabels(@RequestHeader String token)
 //	{

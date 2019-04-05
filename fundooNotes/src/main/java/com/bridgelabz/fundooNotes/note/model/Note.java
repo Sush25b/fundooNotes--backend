@@ -1,6 +1,7 @@
 package com.bridgelabz.fundooNotes.note.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -69,17 +70,19 @@ public class Note
 //************************8********************
 	@ManyToMany(cascade= {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH})
 	@JsonIgnore
-	@JoinTable(
-				name="note_label",
-				joinColumns=@JoinColumn(name="note_note_id"),
-				inverseJoinColumns=@JoinColumn(name="label_label_id")
-			  )
-	private Set<Label> label;
+	private List<Label> label;
 
+//	@JoinTable(
+//				name="note_label",
+//				joinColumns=@JoinColumn(name="note_note_id"),
+//				inverseJoinColumns=@JoinColumn(name="label_label_id")
+//			  )
+
+	
 	public Long getNoteId() {
 		return noteId;
 	}
-
+	
 	public void setNoteId(Long noteId) {
 		this.noteId = noteId;
 	}
@@ -155,34 +158,31 @@ public class Note
 	public void setLastUpdateTime(LocalDateTime lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
 	}
-
 	
+	public List<Label> getLabel() {
+		return label;
+	}
 
+	public void setLabel(List<Label> label) {
+		this.label = label;
+	}
+	
 //	public User getUser() {
 //		return user;
 //	}
 //
 //	public void setUser(User user) {
 //		this.user = user;
-//	}
-
-	public Set<Label> getLabel() {
-		return label;
-	}
-
-	public void setLabel(Set<Label> label) {
-		this.label = label;
-	}
-
+//	}+ ", label=" + label
+	
 	@Override
 	public String toString() {
 		return "Note [noteId=" + noteId + ", title=" + title + ", description=" + description + ", color=" + color
 				+ ", isPinned=" + isPinned + ", isTrash=" + isTrash + ", isArchive=" + isArchive + ", reminder="
 				+ reminder + ", createdTime=" + createdTime + ", lastUpdateTime=" + lastUpdateTime 
-				+ ", label=" + label + "]";
+				+ "]";
 	}
-	
-	
+
 }
 
 

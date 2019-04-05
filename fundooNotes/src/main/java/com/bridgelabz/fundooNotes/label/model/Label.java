@@ -1,5 +1,6 @@
 package com.bridgelabz.fundooNotes.label.model;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -39,15 +40,16 @@ public class Label
 //	private User user;
 
 //************************8********************
-	@ManyToMany(cascade= {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH})
-	@JsonIgnore
-	@JoinTable(
-				name="note_label",
-				joinColumns=@JoinColumn(name="label_label_id"),
-				inverseJoinColumns=@JoinColumn(name="note_note_id")
-			  )
+	@ManyToMany(mappedBy="label",cascade= {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH})
 	Set<Note> note;
+	
 
+//	@JoinTable(
+//				name="note_label",
+//				joinColumns=@JoinColumn(name="label_label_id"),
+//				inverseJoinColumns=@JoinColumn(name="note_note_id")
+//			  )
+	
 	public Long getLabelId() {
 		return labelId;
 	}
@@ -80,8 +82,10 @@ public class Label
 		this.note = note;
 	}
 
-	@Override
-	public String toString() {
-		return "Label [labelId=" + labelId + ", labelTitle=" + labelTitle + "]";
-	}
+//	@Override
+//	public String toString() {
+//		return "Label [labelId=" + labelId + ", labelTitle=" + labelTitle + "]";
+//	}
+
+	
 }

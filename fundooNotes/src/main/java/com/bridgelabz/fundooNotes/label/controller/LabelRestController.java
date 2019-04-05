@@ -79,9 +79,16 @@ public class LabelRestController
 	 * Method to getAll notes--->from particular id 
 	 */
 	@GetMapping(value="/getAlls") 
-	public Set<Label> getAllNotes(@RequestHeader(value="jwtToken") String token) throws UnsupportedEncodingException
+	public Set<Label> getAllLabels(@RequestHeader(value="jwtToken") String token) 
 	{
 		System.out.println("======");
 		return labelServices.getAllLabels(token);
+	}
+	
+	@GetMapping(value="/getLabelNote") 
+	public Set<Note> getAllLabelNotes(@RequestParam Long labelId ,@RequestHeader(value="jwtToken") String token) 
+	{
+		System.out.println("======");
+		return labelServices.getLabelNote(labelId,token);
 	}
 }

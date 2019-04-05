@@ -30,4 +30,6 @@ public interface LabelServices
 
 	public ResponseEntity<UserResponse> addLabelToNote(Long labelId, String labelTitle, String token);
 
+	public Set<Note> getLabelNote(Long labelId, String token);
+
 }

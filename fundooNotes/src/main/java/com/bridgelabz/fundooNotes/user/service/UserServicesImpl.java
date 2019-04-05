@@ -59,7 +59,12 @@ public class UserServicesImpl implements UserServices {
 	@Autowired
 	Environment environment;
 
+	@Autowired
+	private RabbitMqSenderImpl rabbitMqSenderImpl;
 
+	@Autowired
+	private RabbitMqConsumerImpl rabbitMqConsumerImpl;
+	
 	/**
 	 * to get current date and time
 	 */
@@ -139,6 +144,7 @@ public class UserServicesImpl implements UserServices {
 		// the Repository==>will save the Object & also return the Saved Object
 		user = userRepository.save(user);
 
+		
 		// call method-->to send mail
 		sendmail("successfully register", user.getId(),"/validate");
 
@@ -258,7 +264,8 @@ public class UserServicesImpl implements UserServices {
 	/**
 	 * Method to send email
 	 */
-	public void sendmail(String mailSubject, Long userId, String string) {
+	public void sendmail(String mailSubject, Long userId, String string) 
+	{
 		/*
 		 * Outgoing Mail (SMTP) Server requires TLS or SSL: smtp.gmail.com (use
 		 * authentication) Use Authentication: Yes Port for SSL: 465
@@ -286,8 +293,16 @@ public class UserServicesImpl implements UserServices {
 		System.out.println("Session created");
 
 		System.out.println(fromEmail + " " + "*******" + " " + toEmail + " " + mailSubject);
+		
+	    String url=	"http://localhost:8080/fundooNotes/user/"+ TokenUtil.createToken(userId); 
+		
+	    rabbitMqSenderImpl.sendMessageToQueue(url);
+		
+		String activationLink;
+		activationLink=rabbitMqConsumerImpl.getMessage();
 
-		MailHelper.sendEmail(session, toEmail, mailSubject, MailHelper.getUrl(userId)+string);
+		MailHelper.sendEmail(session, toEmail, mailSubject, activationLink+string);
+//		MailHelper.sendEmail(session, toEmail, mailSubject, MailHelper.getUrl(userId)+string);
 	}
 
 }

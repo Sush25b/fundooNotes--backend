@@ -137,7 +137,7 @@ public class NoteServicesImpl implements NoteServices
 
 		List<Note> userNote = user.getNote().stream().filter(data -> (data.isTrash()==trash && data.isArchive()==archive)).collect(Collectors.toList()); 
 		
-		System.out.println(userNote);
+		System.out.println(userNote+"%%%%%");
 		
 		return userNote;
 	}

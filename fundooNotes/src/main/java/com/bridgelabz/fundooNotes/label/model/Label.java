@@ -35,12 +35,15 @@ public class Label
 //	@JsonIgnore
 //	Set<Note> Note;
 	
+	//,
+	
 //	@ManyToOne
 //	@JoinColumn(name="user_id")
 //	private User user;
 
 //************************8********************
 	@ManyToMany(mappedBy="label",cascade= {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH})
+	@JsonIgnore
 	Set<Note> note;
 	
 
@@ -49,6 +52,8 @@ public class Label
 //				joinColumns=@JoinColumn(name="label_label_id"),
 //				inverseJoinColumns=@JoinColumn(name="note_note_id")
 //			  )
+	
+	
 	
 	public Long getLabelId() {
 		return labelId;
@@ -82,10 +87,8 @@ public class Label
 		this.note = note;
 	}
 
-//	@Override
-//	public String toString() {
-//		return "Label [labelId=" + labelId + ", labelTitle=" + labelTitle + "]";
-//	}
-
-	
+	@Override
+	public String toString() {
+		return "Label [labelId=" + labelId + ", labelTitle=" + labelTitle  + "]";
+	}
 }

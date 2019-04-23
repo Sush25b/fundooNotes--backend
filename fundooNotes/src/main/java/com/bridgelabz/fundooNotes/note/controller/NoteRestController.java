@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -64,15 +65,17 @@ public class NoteRestController
 	public List<Note> getAllNotes(@RequestParam boolean trash,@RequestParam boolean archive,@RequestHeader(value="jwtToken") String token) throws UnsupportedEncodingException
 	{
 		System.out.println("======");
-		return noteServices.getUserNotes(token,trash,archive);
+		List<Note> notes=noteServices.getUserNotes(token,trash,archive);
+		System.out.println("notes-->"+notes);
+		return notes;
 	}
 	
 	//successfully
 	/**
 	 * Method to update a--->particular note 
 	 */
-	@PostMapping("/updatenote") 
-	public ResponseEntity<UserResponse> updateNote(@RequestParam("noteId") Long noteId,@RequestBody NoteDto noteDto,@RequestHeader String token) // UserException2 
+	@PutMapping(value="/updatenote") 
+	public ResponseEntity<UserResponse> updateNote(@RequestParam("noteId") Long noteId,@RequestBody NoteDto noteDto,@RequestHeader(value="jwtToken") String token) // UserException2 
 	{ 
 		return noteServices.updateNote(noteId, noteDto,token);
 	}
@@ -111,15 +114,42 @@ public class NoteRestController
 		return noteServices.trashNote(noteId, jwtToken);
 	}
 
-
 	//successfull
 	/**
-	 * Method to move a-->particular note to trash 
+	 * Method to delete note
 	 */
 	@PostMapping(path="/delete") 
-	public ResponseEntity<UserResponse> deleteNote(@RequestParam("noteId") Long noteId,@RequestHeader String token) 
+	public ResponseEntity<UserResponse> deleteNote(@RequestParam("noteId") Long noteId,@RequestHeader(value="jwtToken") String jwtToken) 
 	{
 		System.out.println("***************");
-		return noteServices.deleteNote(noteId, token);
+		return noteServices.deleteReminder(noteId, jwtToken);
 	}
+	
+	//successfull
+	/**
+	 * To add reminder to a particular note 
+	 */
+	@PostMapping(path="/reminder") 
+	public ResponseEntity<UserResponse> addReminder(@RequestParam("noteId") Long noteid,@RequestParam("reminder") String reminder,@RequestHeader(value="jwtToken") String jwtToken)
+	{
+		System.out.println("3333");
+		return noteServices.addReminder(noteid,reminder,jwtToken);
+	}
+	
+	@DeleteMapping(path="/reminderdelete") 
+	public ResponseEntity<UserResponse> deleteReminder(@RequestParam("noteId") Long noteid,@RequestHeader(value="jwtToken") String jwtToken) 
+	{
+		System.out.println("33333333333333");
+		return noteServices.deleteReminder(noteid, jwtToken);
+	}
+  //successfull
+  	/**
+  	 * Method to move a-->particular note to trash 
+  	 */
+//    @PutMapping(value="/addReminder") 
+//  	public ResponseEntity<UserResponse> addreminder(@RequestParam("noteId") Long noteId,@RequestHeader(value="jwtToken") String jwtToken) 
+//  	{
+//  		System.out.println("***************");
+//  		return noteServices.addreminder(noteId, jwtToken);
+//  	}
 }

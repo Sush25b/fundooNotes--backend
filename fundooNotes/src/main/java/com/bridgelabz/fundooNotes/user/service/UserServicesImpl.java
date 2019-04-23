@@ -1,6 +1,12 @@
 package com.bridgelabz.fundooNotes.user.service;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
@@ -14,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bridgelabz.fundooNotes.user.dto.LoginDto;
 import com.bridgelabz.fundooNotes.user.dto.UserDto;
@@ -29,6 +36,7 @@ import com.bridgelabz.fundooNotes.utility.TokenUtil;
 import java.util.Properties;
 
 import javax.mail.Authenticator;
+import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.servlet.http.HttpServletResponse;
@@ -70,7 +78,9 @@ public class UserServicesImpl implements UserServices {
 	 */
 	String currDateTime = LocalDateTime.now().toString();
 
-
+	final Path path= Paths.get("/home/admin1/Documents/Sushant DATA/profilepic");
+	
+	
 	//, HttpServletResponse  response
 	/**
 	 * Method to---> login
@@ -99,8 +109,7 @@ public class UserServicesImpl implements UserServices {
 		  {
 			  //match the loginDto password && validUser password
 			  boolean passwordStatus =passwordEncoder.matches(loginDto.getPassword(), validUser.getPassword());
-			  System.out.println(validUser.getPassword()+"<============>"+loginDto.
-			  getPassword());
+			  System.out.println(validUser.getPassword()+"<============>"+loginDto.getPassword());
 			  
 			  if (passwordStatus == false ) 
 			  { 
@@ -164,14 +173,15 @@ public class UserServicesImpl implements UserServices {
 		Optional<User> alreadyPresent = userRepository.findByEmailid(userDto.getEmailid());
 
 		// check user present in database or not
-		if (!alreadyPresent.isPresent()) {
+		if (!alreadyPresent.isPresent()) 
+		{
 			throw new UserException(401, environment.getProperty("user.forgetpassword.emailId"));
 		}
 
 		Long id = alreadyPresent.get().getId();
 
 		// call method-->to send mail
-		sendmail("email send to reset password", id,"");
+		sendmail2("email send to reset password", id,"/resetPassword");
 
 		return ResponseSender.sendUserResponse("Mail send to resetpassword",200 );
 	}
@@ -185,7 +195,7 @@ public class UserServicesImpl implements UserServices {
 		Long userid = TokenUtil.decodeToken(token);
 
 		// convert Long to int
-		Long id = userid;
+		//Long id = userid;
 
 		System.out.println("9999999999999999999" + userid);
 		Optional<User> alreadyPresent = userRepository.findByid(userid);
@@ -246,6 +256,83 @@ public class UserServicesImpl implements UserServices {
 		// return
 		return ResponseSender.sendUserResponse("Email isverified successfully",200);
 	}
+	
+	
+	public ResponseEntity<UserResponse> setProfilePic(String token, MultipartFile picture) 
+	{	
+		// encode user
+		Long userid = TokenUtil.decodeToken(token);
+				
+		Optional<User> alreadyPresent = userRepository.findByid(userid);
+		// System.out.println(alreadyPresent.get()+"&&&&&&&&&&&&&&&&&&&&&&&&&&");
+
+		// check user present in database or not
+		if (!alreadyPresent.isPresent()) 
+		{
+		
+			throw new UserException(401, environment.getProperty("user.tokenexpire"));
+		}
+
+		User user=alreadyPresent.get();
+		
+		try 
+		{ 
+				Files.copy( picture.getInputStream() , path.resolve(path.getFileName()) , StandardCopyOption.REPLACE_EXISTING );
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			
+		}
+		
+		
+		return ResponseSender.sendUserResponse("profile pic is saved",200);
+	}
+	
+	public ResponseEntity<UserResponse> imageUpload(String token,String image)
+	{
+		
+		// encode user
+		Long userid = TokenUtil.decodeToken(token);
+		 
+		Optional<User> alreadyPresent = userRepository.findByid(userid);
+		
+		if (!alreadyPresent.isPresent()) 
+		{
+			throw new UserException(401, environment.getProperty("user.tokenexpire"));
+		}
+		User user= alreadyPresent.get();
+		
+		user.setProfileImage(image);
+	    userRepository.save(user);
+	    
+		return  ResponseSender.sendUserResponse("profile pic is saved",200);
+	    
+	}
+	
+
+	public String getImage(long id)
+	{
+
+		   Optional<User> alreadyPresent=userRepository.findById(id);
+		
+		   if(alreadyPresent.isPresent())
+		   {
+			   User user= alreadyPresent.get();
+				
+			   return user.getProfileImage();
+		   }
+		   else
+		   {
+			   System.out.println("image not found");
+		   }
+		   return "";
+	}
+
+	
 //
 //	/**
 //	 * Send reponse to frontend
@@ -264,7 +351,7 @@ public class UserServicesImpl implements UserServices {
 	/**
 	 * Method to send email
 	 */
-	public void sendmail(String mailSubject, Long userId, String string) 
+	public void sendmail(String mailSubject, Long userId, String attachString) 
 	{
 		/*
 		 * Outgoing Mail (SMTP) Server requires TLS or SSL: smtp.gmail.com (use
@@ -295,15 +382,65 @@ public class UserServicesImpl implements UserServices {
 		System.out.println(fromEmail + " " + "*******" + " " + toEmail + " " + mailSubject);
 		
 	    String url=	"http://localhost:8080/fundooNotes/user/"+ TokenUtil.createToken(userId); 
-		
-	    rabbitMqSenderImpl.sendMessageToQueue(url);
-		
-		String activationLink;
-		activationLink=rabbitMqConsumerImpl.getMessage();
-
-		MailHelper.sendEmail(session, toEmail, mailSubject, activationLink+string);
-//		MailHelper.sendEmail(session, toEmail, mailSubject, MailHelper.getUrl(userId)+string);
+//		
+//	    rabbitMqSenderImpl.sendMessageToQueue(url);
+//		
+//		String activationLink;
+//		activationLink=rabbitMqConsumerImpl.getMessage();
+//
+//		MailHelper.sendEmail(session, toEmail, mailSubject, activationLink+string);
+	    
+		MailHelper.sendEmail(session, toEmail, mailSubject, MailHelper.getUrl(userId) +attachString);
 	}
+
+
+	/**
+	 * Method to send email
+	 */
+	public void sendmail2(String mailSubject, Long userId, String attachString) 
+	{
+		/*
+		 * Outgoing Mail (SMTP) Server requires TLS or SSL: smtp.gmail.com (use
+		 * authentication) Use Authentication: Yes Port for SSL: 465
+		 */
+
+		fromEmail = environment.getProperty("sender.email");
+		password = environment.getProperty("sender.password");
+
+		System.out.println("SSLEmail Start");
+		Properties props = new Properties();
+		props.put("mail.smtp.host", "smtp.gmail.com"); // SMTP Host
+		props.put("mail.smtp.socketFactory.port", "465"); // SSL Port
+		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory"); // SSL Factory Class
+		props.put("mail.smtp.auth", "true"); // Enabling SMTP Authentication
+		props.put("mail.smtp.port", "465"); // SMTP Port
+
+		Authenticator auth = new Authenticator() {
+			// override the getPasswordAuthentication method
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(fromEmail, password);
+			}
+		};
+
+		Session session = Session.getDefaultInstance(props, auth);
+		System.out.println("Session created");
+
+		System.out.println(fromEmail + " " + "*******" + " " + toEmail + " " + mailSubject);
+		
+	    String url=	"http://localhost:8080/fundooNotes/user/"+ TokenUtil.createToken(userId); 
+//		
+//	    rabbitMqSenderImpl.sendMessageToQueue(url);
+//		
+//		String activationLink;
+//		activationLink=rabbitMqConsumerImpl.getMessage();
+//
+//		MailHelper.sendEmail(session, toEmail, mailSubject, activationLink+string);
+	    
+		MailHelper.sendEmail(session, toEmail, mailSubject, MailHelper.getUrl2(userId) +attachString);
+	}
+
+
+	
 
 }
 

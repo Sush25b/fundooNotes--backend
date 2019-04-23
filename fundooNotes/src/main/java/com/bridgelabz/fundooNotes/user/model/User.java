@@ -50,6 +50,9 @@ public class User
 	@Column(name="isVerified")
 	private String isVerified;
 	
+	@Column(name="profileImage")
+	private String profileImage;
+	
 //	@OneToMany(mappedBy="user")
 //	private List<Note> notes;
 //	
@@ -63,6 +66,15 @@ public class User
 	@OneToMany(targetEntity=Label.class, cascade =CascadeType.ALL)
 	@JoinColumn(name="id")
 	Set<Label> label;
+	
+
+	public String getProfileImage() {
+		return profileImage;
+	}
+
+	public void setProfileImage(String profileImage) {
+		this.profileImage = profileImage;
+	}
 
 	public Long getId() {
 		return id;

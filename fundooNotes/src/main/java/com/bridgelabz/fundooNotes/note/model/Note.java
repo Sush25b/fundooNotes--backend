@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -48,13 +49,23 @@ public class Note
 	private boolean isArchive;
 	
 	@Column(name = "reminder")
-	private LocalDateTime reminder;
+	private String reminder;
 	
 	@Column(name = "created_time")
 	private LocalDateTime createdTime;
 	
 	@Column(name = "lastupdate_time")
 	private LocalDateTime lastUpdateTime;
+	
+	@ManyToMany(cascade= {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH})
+	private Set<Label> label;
+
+//	@JoinTable(
+//				name="note_label",
+//				joinColumns=@JoinColumn(name="note_note_id"),
+//				inverseJoinColumns=@JoinColumn(name="label_label_id")
+//			  )
+	
 	
 //	@ManyToMany(cascade=CascadeType.ALL)
 //	List<Label> label;
@@ -68,17 +79,7 @@ public class Note
 //	private User user;
 	
 //************************8********************
-	@ManyToMany(cascade= {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH})
-	@JsonIgnore
-	private List<Label> label;
 
-//	@JoinTable(
-//				name="note_label",
-//				joinColumns=@JoinColumn(name="note_note_id"),
-//				inverseJoinColumns=@JoinColumn(name="label_label_id")
-//			  )
-
-	
 	public Long getNoteId() {
 		return noteId;
 	}
@@ -135,11 +136,11 @@ public class Note
 		this.isArchive = isArchive;
 	}
 
-	public LocalDateTime getReminder() {
+	public String getReminder() {
 		return reminder;
 	}
 
-	public void setReminder(LocalDateTime reminder) {
+	public void setReminder(String reminder) {
 		this.reminder = reminder;
 	}
 
@@ -159,14 +160,21 @@ public class Note
 		this.lastUpdateTime = lastUpdateTime;
 	}
 	
-	public List<Label> getLabel() {
+	public Set<Label> getLabel() {
 		return label;
 	}
 
-	public void setLabel(List<Label> label) {
+	public void setLabel(Set<Label> label) {
 		this.label = label;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Note [noteId=" + noteId + ", title=" + title + ", description=" + description + ", color=" + color
+				+ ", isPinned=" + isPinned + ", isTrash=" + isTrash + ", isArchive=" + isArchive + ", reminder="
+				+ reminder + ", createdTime=" + createdTime + ", lastUpdateTime=" + lastUpdateTime + ", label=" +  label +"]";
+	}
+//	
 //	public User getUser() {
 //		return user;
 //	}
@@ -175,13 +183,8 @@ public class Note
 //		this.user = user;
 //	}+ ", label=" + label
 	
-	@Override
-	public String toString() {
-		return "Note [noteId=" + noteId + ", title=" + title + ", description=" + description + ", color=" + color
-				+ ", isPinned=" + isPinned + ", isTrash=" + isTrash + ", isArchive=" + isArchive + ", reminder="
-				+ reminder + ", createdTime=" + createdTime + ", lastUpdateTime=" + lastUpdateTime 
-				+ "]";
-	}
+	
+	
 
 }
 

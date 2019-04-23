@@ -67,6 +67,25 @@ public class LabelServicesImpl implements LabelServices
 		return ResponseSender.sendUserResponse("label is created", 200);
 	}
 	
+	public ResponseEntity<UserResponse> LabelCreate( String labelTitle, String token)
+	{
+		System.out.println("******");
+		Label label = new Label();
+		label.setLabelTitle(labelTitle);
+		Long userId = TokenUtil.decodeToken(token);
+		
+		User user = userRepository.findById(userId).orElseThrow(() -> new UserException(environment.getProperty("user.search")));
+		
+		labelRepository.save(label);
+
+		user.getLabel().add(label);
+	
+		//save user
+		userRepository.save(user);
+
+		return ResponseSender.sendUserResponse("label is created", 200);
+	}
+	
 	public ResponseEntity<UserResponse> updateLabel( Long labelId, LabelDto labelDto, String token) // UserException2 
 	{
 		Long userId = TokenUtil.decodeToken(token);
@@ -85,16 +104,56 @@ public class LabelServicesImpl implements LabelServices
 		return ResponseSender.sendUserResponse("Note is created", 200);
 	}
 	
+	public ResponseEntity<UserResponse> deleteLabelNote( Long noteId,Long labelId, String token)
+	{
+		Long userId = TokenUtil.decodeToken(token);
+		
+		User user = userRepository.findById(userId).orElseThrow(() -> new UserException(environment.getProperty("user.search")));
+		Note note = user.getNote().stream().filter(data -> data.getNoteId().equals(noteId)).findFirst().get();
+		boolean checkNote = note.getLabel().removeIf(data -> data.getLabelId().equals(labelId));
+		
+		System.out.println("^^^^^^^^"+note);
+		user.getNote().add(note);
+//	    Set<Label> label=user.getLabel();
+//System.out.println(label);
+//	    Label filteredlabel = label.stream().filter(data -> data.getLabelId().equals(labelId)).findFirst().orElseThrow(() -> new UserException(404, environment.getProperty("105")));
+//		System.out.println(filteredlabel);
+//	    label.remove(filteredlabel);
+//	    user.setLabel(label);
+//	    System.out.println(label);
+	    userRepository.save(user);
+	    //labelRepository.deleteById(filteredlabel.getLabelId());
+	    return ResponseSender.sendUserResponse("Label Deleted successfully", 200);
+	} 
+	
 	public ResponseEntity<UserResponse> deleteLabel( Long labelId, String token)
 	{
 		Long userId = TokenUtil.decodeToken(token);
 		
 		User user = userRepository.findById(userId).orElseThrow(() -> new UserException(environment.getProperty("user.search")));
-	    Set<Label> label=user.getLabel();
-
-	    Label filteredlabel = label.stream().filter(data -> data.getLabelId().equals(labelId)).findFirst().orElseThrow(() -> new UserException(404, environment.getProperty("105")));
 		
-	    labelRepository.deleteById(filteredlabel.getLabelId());
+		List<Note> notes= user.getNote();
+//		Iterator<Note> itr = notes.iterator();  
+//		 while(itr.hasNext()) 
+//	     {  
+//	      System.out.println(itr.next().getNoteId());
+//	     }  
+//		
+//		System.out.println(notes);
+		Iterator<Note> itr2 = notes.iterator();  
+	       
+	     while(itr2.hasNext()) 
+	     {  
+//	    	 System.out.println(itr2.next().getLabel());
+	    	boolean check= itr2.next().getLabel().removeIf(data -> data.getLabelId().equals(labelId));
+	       System.out.println(check); 
+	       System.out.println("+++++++++++++++");
+	     }  
+
+	     System.out.println(labelId);
+	       labelRepository.deleteById(labelId);
+
+	       userRepository.save(user);
 	    return ResponseSender.sendUserResponse("Label Deleted successfully", 200);
 	} 
 	
@@ -179,6 +238,12 @@ public class LabelServicesImpl implements LabelServices
 		
 		System.out.println(filteredlabel+" ---> "+notes);
 		return notes;
+	}
+
+	@Override
+	public ResponseEntity<UserResponse> deleteLabelNote(Long labelId, String token) {
+		// TODO Auto-generated method stub
+		return null;
 	} 
 	
 //==================================

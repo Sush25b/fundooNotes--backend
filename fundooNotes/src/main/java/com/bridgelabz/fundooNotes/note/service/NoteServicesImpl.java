@@ -1,6 +1,11 @@
 package com.bridgelabz.fundooNotes.note.service;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collector;
@@ -49,6 +54,9 @@ public class NoteServicesImpl implements NoteServices
 	 * to get current date and time
 	 */
 	LocalDateTime currDateTime = LocalDateTime.now();
+//	
+//	DateFormat dateandtime =new SimpleDateFormat("yyyy-MM-dd HH:mm")
+//	
 
 	/**
 	 * Create Note
@@ -81,11 +89,12 @@ public class NoteServicesImpl implements NoteServices
 		Long userid = TokenUtil.decodeToken(token);
 
 		//get particular user--->from database
-		User user = userRepository.findById(userid).orElseThrow(() -> new UserException(environment.getProperty("user.search")));
+		User user = userRepository.findById(userid).orElseThrow( () -> new UserException(environment.getProperty("user.search")) );
 
 		//get all notes-->of that user
 		List<Note> notes = user.getNote();
 
+		
 		//from the Notes List-->filter to get particular note by noteid
 		Note filteredNote = notes.stream().filter(data -> data.getNoteId().equals(noteId)).findFirst().orElseThrow(() -> new UserException(environment.getProperty("user.note")));
 
@@ -142,6 +151,7 @@ public class NoteServicesImpl implements NoteServices
 		return userNote;
 	}
 
+
 	//update
 	/**
 	 * Update notes
@@ -156,12 +166,15 @@ public class NoteServicesImpl implements NoteServices
 		User user = userRepository.findById(userid).orElseThrow(() -> new UserException(environment.getProperty("user.note")));
 		//get all notes-->of that user
 		List<Note> notes = user.getNote();
-
+		
 		//from the Notes List-->we filter to get particular noteid
 		Note filteredNote = notes.stream().filter(data -> data.getNoteId().equals(noteId)).findFirst().orElseThrow(() -> new UserException(environment.getProperty("user.note")));
 		filteredNote.setTitle(noteDto.getTitle());
 		filteredNote.setDescription(noteDto.getDescription());
+		filteredNote.setColor(noteDto.getColor());
 		filteredNote.setLastUpdateTime(currDateTime);    
+		
+				System.out.println(filteredNote);
 		//add the new note to-->User Notes List
 		notes.add(filteredNote);
 
@@ -188,7 +201,7 @@ public class NoteServicesImpl implements NoteServices
 		List<Note> notes = user.getNote();
 
 		//from the Notes List-->we filter to get particular note by noteid
-		Note filteredNote = notes.stream().filter(data -> data.getNoteId().equals(noteId)).findFirst().orElseThrow(() -> new UserException(environment.getProperty("user.note")));
+		Note filteredNote = notes.stream().filter( data -> data.getNoteId().equals(noteId) ).findFirst().orElseThrow(() -> new UserException(environment.getProperty("user.note")));
 
 		//check note Pinned STATUS  
 		if(filteredNote.isPinned()==true)
@@ -197,18 +210,28 @@ public class NoteServicesImpl implements NoteServices
 			filteredNote.setLastUpdateTime(currDateTime);    
 			//add the changed note to-->User Notes List
 			notes.add(filteredNote);
+			
+			user.setNote(notes);
+			userRepository.save(user);
+			
+			return ResponseSender.sendUserResponse("note unpinned successfully", 200);
 		}
 		else
 		{	filteredNote.setPinned(true);
 			filteredNote.setLastUpdateTime(currDateTime);    
 			//add the changed note to-->User Notes List
 			notes.add(filteredNote);
+			
+			user.setNote(notes);
+			userRepository.save(user);
+			
+			return ResponseSender.sendUserResponse("note pinned successfully", 200);
 		}
 
-		user.setNote(notes);
-		userRepository.save(user);
+//		user.setNote(notes);
+//		userRepository.save(user);
 
-		return ResponseSender.sendUserResponse("note pinned successfully", 200);
+//		return ResponseSender.sendUserResponse("note pinned successfully", 200);
 	}
 
 
@@ -238,6 +261,11 @@ public class NoteServicesImpl implements NoteServices
 			filteredNote.setLastUpdateTime(currDateTime);    
 			//add the changed note to-->User Notes List
 			notes.add(filteredNote);
+			
+			user.setNote(notes);
+			userRepository.save(user);
+			
+			return ResponseSender.sendUserResponse("note unarchive successfully", 200);
 		}
 		else
 		{
@@ -245,14 +273,42 @@ public class NoteServicesImpl implements NoteServices
 			filteredNote.setLastUpdateTime(currDateTime);   
 			//add the changed note to-->User Notes List
 			notes.add(filteredNote);
+			
+			user.setNote(notes);
+			userRepository.save(user);
+			
+			return ResponseSender.sendUserResponse("note archive successfully", 200);
 		}
-
-		user.setNote(notes);
-		userRepository.save(user);
-
-		return ResponseSender.sendUserResponse("note Archive successfully", 200);
 	}
 
+	//addReminder
+		/**
+		 * set reminder of a  notes
+		 */
+		@Override
+		public ResponseEntity<UserResponse> addreminder(Long noteId,String reminder, String token)
+		{
+			System.out.println(noteId+" "+token);
+			Long userid = TokenUtil.decodeToken(token);
+
+			//get particular user--->from database
+			User user = userRepository.findById(userid).orElseThrow(() -> new UserException(environment.getProperty("user.note")));
+
+			//get all notes-->of that user
+			List<Note> notes = user.getNote();
+
+			//from the Notes List-->we filter to get particular note by noteid
+			Note filteredNote = notes.stream().filter(data -> data.getNoteId().equals(noteId)).findFirst().orElseThrow(() -> new UserException(environment.getProperty("user.note")));
+
+			//check note Archieve STATUS  
+			//filteredNote.setReminder(reminder);
+
+			user.setNote(notes);
+			userRepository.save(user);
+
+			return ResponseSender.sendUserResponse("note Archive successfully", 200);
+		}
+	
 	
 	//delete
 	/**
@@ -267,20 +323,26 @@ public class NoteServicesImpl implements NoteServices
 		//get particular user--->from database
 		User user = userRepository.findById(userid).orElseThrow(() -> new UserException(environment.getProperty("user.note")));
 		//get all notes-->of that user
-		List<Note> notes = user.getNote();
-
-		//for loop to search note
-		for(Note n:notes)
-		{
-			if(n.getNoteId()==noteId )
-			{
-				notes.remove(noteId);
-				System.out.println(notes);
-				System.out.println("note:"+" "+noteId+" "+"successfully delted");
-			}
-			else
-				System.out.println("note:"+" "+noteId+" "+" not successfully delted");
-		}
+		noteRepository.deleteById(noteId);
+//		List<Note> notes = user.getNote();
+//
+//		//for loop to search note
+//		for(Note n:notes)
+//		{
+//			if(n.getNoteId()==noteId )
+//			{
+//				notes.remove(noteId);
+//				System.out.println(notes);
+//				System.out.println("note:"+" "+noteId+" "+"successfully delted");
+//			}
+//			else
+//			{
+//				
+//			}
+//		}
+//		
+//		user.setNote(notes);
+//		userRepository.save(user);
 
 		//				Optional<Note> notePresent=noteRepository.findById(noteId);
 		//				
@@ -292,13 +354,68 @@ public class NoteServicesImpl implements NoteServices
 		//				else
 		//					System.out.println("note:"+" "+noteId+" "+" not successfully delted");
 
-		System.out.println(notes);
-		user.setNote(notes);
-		userRepository.save(user);
-
-		return null;
+		return ResponseSender.sendUserResponse("note deleted successfully", 200);
 	}
 
+//	@Override
+//	public ResponseEntity<UserResponse> addReminder(Long noteid, String reminder, String jwtToken) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+	
+	/**
+	 * To add reminder to a particular note 
+	 */
+	public ResponseEntity<UserResponse> addReminder(Long noteid, String reminder, String token)
+	{
+		Long userid = TokenUtil.decodeToken(token);
+		User user = userRepository.findById(userid)
+				.orElseThrow(() -> new UserException(404, "userid not found"));
+		DateFormat dateAndTimeFormat = new SimpleDateFormat("E MMM dd yyyy HH:mm:ss");
+		Date date = null;
+		try {
+			date = dateAndTimeFormat.parse(reminder);
+			System.out.println(date);
+			SimpleDateFormat sdf=new SimpleDateFormat("MMM-dd HH:mm a");
+			
+			Note note = user.getNote().stream().filter(data ->data.getNoteId().equals(noteid)).findFirst().get();
+
+			note.setReminder(sdf.format(date));
+			//note.setReminder(reminder);
+			System.out.println(date);
+			
+			note.setLastUpdateTime(LocalDateTime.now());
+			user.getNote().add(note);
+			userRepository.save(user);
+			return ResponseSender.sendUserResponse("reminder successfully", 200);
+			
+		}
+		catch (ParseException e) 
+		{
+			e.printStackTrace();
+		}
+		return ResponseSender.sendUserResponse("reminder not added", 200);
+	}
+	
+	
+	public ResponseEntity<UserResponse> deleteReminder( Long noteid,String token) 
+	{
+		System.out.println(token+" "+noteid);
+		Long userid = TokenUtil.decodeToken(token);
+		User user  = userRepository.findById(userid).orElseThrow(()-> new UserException(400, "user not found"));
+			List<Note> notes= user.getNote();
+			
+			Note reminderNote = notes.stream().filter(data ->data.getNoteId().equals(noteid)).findFirst().orElseThrow(()-> new UserException(404, "note not found"));
+				
+			    reminderNote.setReminder(null);
+				reminderNote.setLastUpdateTime(LocalDateTime.now());
+				
+				notes.add(reminderNote);
+				
+				userRepository.save(user);
+				System.out.println("done");
+				return ResponseSender.sendUserResponse("reminder deleted", 200);
+	}
 }
 
 

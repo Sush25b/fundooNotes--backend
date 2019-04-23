@@ -27,5 +27,11 @@ public interface NoteServices
 	public ResponseEntity<UserResponse> isArchieve(Long noteId, String token);
 
 	public List<Note> getUserNotes(String token, boolean trash, boolean archive);
+
+	public ResponseEntity<UserResponse> addreminder(Long noteId,String reminder,String token);
+
+	public ResponseEntity<UserResponse> addReminder(Long noteid, String reminder, String jwtToken);
+	
+	public ResponseEntity<UserResponse> deleteReminder( Long noteid,String token); 
 	
 }

@@ -7,6 +7,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,10 +34,17 @@ public class LabelRestController
 	/**
 	 * Method to Create a label
 	 */
+	//old
 	@PostMapping(path="/createlabel")
 	public ResponseEntity<UserResponse> createLabel(@RequestBody LabelDto labelDto,@RequestHeader(value="jwtToken") String jwtToken) 
 	{
 		return labelServices.createLabel(labelDto, jwtToken);
+	}
+	
+	@PostMapping(path="/labelcreate")
+	public ResponseEntity<UserResponse> LabelCreate(@RequestParam String labelTitle,@RequestHeader(value="jwtToken") String jwtToken) 
+	{
+		return labelServices.LabelCreate(labelTitle, jwtToken);
 	}
 	
     //successfully
@@ -53,22 +61,29 @@ public class LabelRestController
 	/**
 	 * Method to move a-->particular note to trash 
 	 */
-	@PostMapping(value="/delete") 
-	public ResponseEntity<UserResponse> deleteNote(@RequestParam("labelId") Long labelId,@RequestHeader String token) 
-	{
-		System.out.println("***************");
-		return labelServices.deleteLabel(labelId, token);
-	}
+//	@PostMapping(value="/delete") 
+//	public ResponseEntity<UserResponse> deleteNote(@RequestParam("labelId") Long labelId,@RequestHeader String token) 
+//	{
+//		System.out.println("***************");
+//		return labelServices.deleteLabel(labelId, token);
+//	}
 
 	@PostMapping("/labelToNote")
-	public ResponseEntity<UserResponse> addLabelToNote(@RequestParam Long noteId,@RequestParam String labelTitle,@RequestHeader String token) 
+	public ResponseEntity<UserResponse> addLabelToNote(@RequestParam Long noteId,@RequestParam String labelTitle,@RequestHeader(value="jwtToken") String token) 
 	{
 		System.out.println("***************");
 		return labelServices.addLabelToNote(noteId, labelTitle, token);
 	}
 	
-	@PostMapping("/deleteLabel")
-	public ResponseEntity<UserResponse> deleteLabelFromNote(@RequestParam Long labelId,@RequestHeader String token) 
+	@DeleteMapping("/deleteLabelNote")
+	public ResponseEntity<UserResponse> deleteLabelFromNote(@RequestParam Long noteId,@RequestParam Long labelId,@RequestHeader(value="jwtToken") String token) 
+	{
+		System.out.println("***************");
+		return labelServices.deleteLabelNote(noteId,labelId, token);
+	}
+	
+	@DeleteMapping("/deleteLabel")
+	public ResponseEntity<UserResponse> deleteLabel(@RequestParam Long labelId,@RequestHeader(value="jwtToken") String token) 
 	{
 		System.out.println("***************");
 		return labelServices.deleteLabel(labelId, token);
@@ -91,4 +106,6 @@ public class LabelRestController
 		System.out.println("======");
 		return labelServices.getLabelNote(labelId,token);
 	}
+	
+	
 }

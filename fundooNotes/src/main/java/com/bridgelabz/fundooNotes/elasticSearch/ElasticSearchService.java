@@ -12,7 +12,7 @@ import com.bridgelabz.fundooNotes.user.response.UserResponse;
 
 public interface ElasticSearchService 
 {
-	public String createNote(NoteEs note)  throws IOException;
+	public String createNote(Note note)  throws IOException;
 
 	public NoteEs findById(String id) throws IOException;
 
@@ -20,5 +20,6 @@ public interface ElasticSearchService
 
 	public String deleteNote(String id) throws IOException;
 
-	List<Note> getNoteByAllFeilds(String searchName, int userid);
+	List<Note> getNoteByAllFeilds(String searchName, Long userid) throws Exception;
+	
 }

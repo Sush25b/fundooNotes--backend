@@ -21,6 +21,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,18 +36,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class ElasticSearchServiceImpl implements ElasticSearchService
 {
-	String INDEX="notedetails";
-	String TYPE="note";
+//	String INDEX="notedetails";
+//	String TYPE="note";
 	
+	String INDEX="es";
+	String TYPE="createnote";
+	
+	@Autowired
 	private RestHighLevelClient client;
 
+	@Autowired
     private ObjectMapper objectMapper;
 
-	public String createNote(@RequestBody NoteEs note) throws IOException
+	public String createNote(NoteEs note) throws IOException
 	{
-		 UUID uuid = UUID.randomUUID();
-		 
-		 note.setNoteId(uuid.toString());
+//		 UUID uuid = UUID.randomUUID();
+//		 
+//		 note.setNoteId(uuid.toString());
 
 	        Map<String, Object> documentMapper = objectMapper.convertValue(note, Map.class);
 
@@ -96,34 +102,40 @@ public class ElasticSearchServiceImpl implements ElasticSearchService
         return profileDocuments;
     }
 
+//***********************************************************************************
 	@Override
 	public String deleteNote(String id) throws IOException
 	{
 		 DeleteRequest deleteRequest = new DeleteRequest(INDEX, TYPE, id);
-	     DeleteResponse response =
-	                client.delete(deleteRequest, RequestOptions.DEFAULT);
+	     DeleteResponse response = client.delete(deleteRequest, RequestOptions.DEFAULT);
 
 	     return response.getResult().name();
 	}
 	
 	@Override
-	public List<Note> getNoteByAllFeilds(String searchName,int userid) 
+	public List<Note> getNoteByAllFeilds(String searchName,Long userid) throws Exception 
 	{
+		System.out.println(searchName+" "+userid);
 		try {		
-			SearchRequest searchRequest = new SearchRequest("notes");
+			SearchRequest searchRequest = new SearchRequest("es");
 			SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
 			QueryBuilder queryBuilder = QueryBuilders.boolQuery().must(QueryBuilders.queryStringQuery("*"+searchName+"*")
-											.analyzeWildcard(true).field("title", 3.0f).field("description",2.0f).field("labels"))
-											.filter(QueryBuilders.termQuery("esuserid", String.valueOf(userid)));
+											.analyzeWildcard(true).field("title", 3.0f).field("description",2.0f));
+											//.filter(QueryBuilders.termQuery("esuserid", String.valueOf(userid)));
 			
 			searchSourceBuilder.query(queryBuilder);
 			searchRequest.source(searchSourceBuilder);
-			
+//			SearchRequest searchRequest = new SearchRequest("es","createnote").source(searchSourceBuilder);
+
+			System.out.println(searchRequest);
+			System.out.println("1");
 			SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+			System.out.println("2");
 
 			SearchHit[] searchedNotes = searchResponse.getHits().getHits();
 
+			
 			List<Note> ListOfNotes = new ArrayList<Note>();
 
 			if (searchedNotes.length > 0) {
@@ -148,6 +160,21 @@ public class ElasticSearchServiceImpl implements ElasticSearchService
 			throw new Exception("Internal Server error");
 		}
 	
+	}
+
+	@Override
+	public String createNote(Note note) throws IOException 
+	{
+//		UUID uuid = UUID.randomUUID();
+//			 note.setNoteId((long) 111);
+		
+		 Map<String, Object> documentMapper = objectMapper.convertValue(note, Map.class);
+		 
+	        IndexRequest indexRequest = new IndexRequest(INDEX, TYPE,String.valueOf(note.getNoteId()) ).source(documentMapper);
+
+	        IndexResponse indexResponse = client.index(indexRequest, RequestOptions.DEFAULT);
+	        System.out.println("///////////////////");
+	        return indexResponse.getResult().name();
 	}
 
 }
